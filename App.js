@@ -1,6 +1,6 @@
 import React, {useState} from 'react'; 
 import {View, Text, StyleSheet,SafeAreaView , StatusBar,
-TouchableOpacity , FlatList , Modal}  from 'react-native'
+TouchableOpacity , FlatList ,  Modal, TextInput}  from 'react-native'
 
 import {Ionicons} from'@expo/vector-icons';
 import TaskList from './src/components/TaskList/index.js';
@@ -10,17 +10,23 @@ const AnimatedBtn = Animatable.createAnimatableComponent(TouchableOpacity);
 
 export default function App(){
 
-     const [task , setTask] = useState ([
-       {key: 1, task : 'Comprar pao'},
-       {key: 2, task : 'Ir para academia'},
-       {key: 3, task : 'Fazer os exercícios da faculdade'},
-       {key: 4, task : 'Comprar chocolate com Coca Cola'},
-       {key: 5, task : 'Assistir Algum vídeo no Youtube'},
-
-      ]);
-
+      const [task , setTask] = useState ([]);
       const [open, setOpen] = useState(false);
+      const [input, setInput] = useState (''); 
 
+      function handleAdd (){
+        if (input ==='')return; 
+
+        const data = {
+           key: input, 
+           task: input, 
+        }; 
+
+        setTask([...task,data]); 
+        setOpen(false); 
+        setInput('');
+      }
+ 
     return (
       <SafeAreaView style = {styles.container}>
         <StatusBar backgroundColor = '#a171d31' border = 'light'/>
@@ -41,8 +47,30 @@ export default function App(){
       />
 
        <Modal animationType ="slide"  transparent = {false} visible ={open}>
-          <SafeAreaView>
-            <Text> modal 123</Text>
+           <SafeAreaView style = {styles.modal}>
+
+              <View style = {styles.modalHeader}> 
+                <TouchableOpacity style ={{ marginLeft:5, marginRight: 5}} onPress = {() => setOpen(false)} >
+                  <Ionicons name  = "md-arrow-back" size = {40} color = "#FFF"/>
+                </TouchableOpacity>
+                <Text style = {styles.modalTitle}> Nova Tarefa</Text>
+              </View>
+
+              <Animatable.View style={styles.modalBody} animation = 'fadeInUp' useNativeDriver >
+                <TextInput
+                  placeholder = " O que precisa fazer hoje"
+                  placeholderTextColor = "#747474"
+                  autoCorrect ={false}
+                  style ={styles.input}
+                  multiline = {true}
+                  value = {input}
+                  onChangeText = {(texto)=> setInput(texto)}
+                />
+                <TouchableOpacity style = {styles. handleAdd} onPress ={handleAdd }>
+                   <Text style = {styles.handleAddText}>Cadastrar</Text>
+                </TouchableOpacity>
+              </Animatable.View>
+
           </SafeAreaView>
        </Modal>
 
@@ -96,8 +124,56 @@ const styles  = StyleSheet.create({
         width: 1, 
         height:3, 
       }
+    },
+   modal:{
+     flex:1,
+     backgroundColor: '#171d31',
+     
+   },
+   modalHeader:{
+     marginLeft: 10, 
+     marginTop:20,
+     flexDirection: 'row',
+     alignItems:'center'
+
+   },
+   modalTitle:{
+     marginLeft: 15,
+     fontSize: 23,
+     color:'#fff'
+
+   }, 
+   modalBody:{
+     marginTop: 15, 
+   },
+   input:{
+     fontSize:15, 
+     marginLeft: 10, 
+     marginRight: 10, 
+     marginTop: 30,
+     backgroundColor: '#FFF', 
+     padding:9, 
+     height:85, 
+     textAlignVertical:'top',
+     color:'#000', 
+    borderRadius: 5,
+   },
+   handleAdd:{
+    backgroundColor:'#FFF',
+    marginTop: 10, 
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 10, 
+    marginRight: 10,
+    borderRadius: 5, 
+    height: 40, 
 
 
-    }
 
-})
+
+   },
+   handleAddText:{
+     fontSize: 20, 
+
+   }
+  });
