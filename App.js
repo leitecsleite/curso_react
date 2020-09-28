@@ -1,6 +1,6 @@
-import React, {useState} from 'react'; 
+import React, {useState, useCallback, useEffect} from 'react'; 
 import {View, Text, StyleSheet,SafeAreaView , StatusBar,
-TouchableOpacity , FlatList ,  Modal, TextInput}  from 'react-native'
+TouchableOpacity , FlatList ,  Modal, TextInput, AsyncStorage}  from 'react-native'
 
 import {Ionicons} from'@expo/vector-icons';
 import TaskList from './src/components/TaskList/index.js';
@@ -26,9 +26,39 @@ export default function App(){
         setOpen(false); 
         setInput('');
       }
+      // Buscando todas as Tarefas ao iniciar o APP
+      useEffect(() => {
+
+           const taskStorage = await AsyncStorage.getItem('@task');
+
+           if(taskStorage){
+             setTask(JSON.parse(taskStorage));
+           }
+         } 
+       loadTasks();
+
+      },[]);
+
+      //Buscando caso tenha alguma tarefa alterada
+
+      useEffect (() => {
+        async function saveTasks(){
+          await AsyncStorage.setItem('@task', JSON.stringify(task));
+        }
+
+        saveTasks();
+      }, [task]);
+
+
+
+      const handleDelete = useCallback((data)=>{
+        const find = task.filter ( r => r.key !== data.key)
+        setTask(find);
+      })
+      
  
-    return (
-      <SafeAreaView style = {styles.container}>
+      return (
+       <SafeAreaView style = {styles.container}>
         <StatusBar backgroundColor = '#a171d31' border = 'light'/>
 
         <View style = {styles.content}> 
@@ -43,7 +73,7 @@ export default function App(){
        showsHorizontalScrollIndicator = {false}
        data ={task}
        keyExtractor = {(item) => String(item.key)}
-       renderItem ={({item}) => <TaskList data ={item}/>}
+       renderItem ={({item}) => <TaskList data ={item} handleDelete= {handleDelete}/>}
       />
 
        <Modal animationType ="slide"  transparent = {false} visible ={open}>
