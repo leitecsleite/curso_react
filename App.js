@@ -29,6 +29,7 @@ export default function App(){
       // Buscando todas as Tarefas ao iniciar o APP
       useEffect(() => {
 
+        async function loadTasks (){
            const taskStorage = await AsyncStorage.getItem('@task');
 
            if(taskStorage){
