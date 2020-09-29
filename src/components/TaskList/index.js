@@ -15,14 +15,13 @@ export default function TaskList({data, handleDelete}){
              <Ionicons name = "md-checkmark-circle" size = {30} color ='#121212'/>
           </TouchableOpacity>
           
-
+           
           <View>
             <Text style = {styles.task} >{data.task}</Text>
           </View>
         </Animatable.View>
     )
 }
-
 const styles = StyleSheet.create({
     container:{
           flex: 1, 
